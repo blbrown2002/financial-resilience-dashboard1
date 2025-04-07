@@ -65,6 +65,46 @@ total_states = len(df)
 
 st.markdown(f"**{selected_state}** ranks **#{rank} out of {total_states}** in overall financial resilience.")
 
+# Get normalized values for the selected state
+row = df[df["State"] == selected_state].iloc[0]
+income = row["Income_Norm"]
+unemp = row["Unemployment_Norm"]
+cost = row["Cost_Norm"]
+
+# Build comment based on thresholds
+comment_parts = []
+
+# Income comment
+if income > 0.75:
+    comment_parts.append("strong income levels")
+elif income < 0.4:
+    comment_parts.append("low income levels")
+
+# Unemployment comment
+if unemp < 0.3:
+    comment_parts.append("very low unemployment")
+elif unemp > 0.7:
+    comment_parts.append("high unemployment")
+
+# Cost of living comment
+if cost < 0.4:
+    comment_parts.append("affordable cost of living")
+elif cost > 0.75:
+    comment_parts.append("high cost of living")
+
+# Combine comments
+if comment_parts:
+    insight = "This score reflects " + ", ".join(comment_parts[:-1])
+    if len(comment_parts) > 1:
+        insight += ", and " + comment_parts[-1] + "."
+    else:
+        insight += comment_parts[-1] + "."
+else:
+    insight = "This state has balanced factors across income, unemployment, and cost."
+
+st.markdown(f"_**Insight:** {insight}_")
+
+
 
 # ---------------------------------------------
 # 📊 Bar Chart
