@@ -199,3 +199,40 @@ st.download_button(
     mime='text/csv',
 )
 
+# ---------------------------------------------
+# ℹ️ Methodology & FAQ
+# ---------------------------------------------
+st.markdown("### ℹ️ Methodology & FAQ")
+
+st.markdown("""
+**Q: What is the Resilience Score?**  
+The Resilience Score is a data-driven estimate of how well a U.S. state could financially withstand a crisis — like a natural disaster, economic downturn, or inflation surge.
+
+**Q: What data is it based on?**  
+Each state’s score blends:
+- **Median Income** (normalized)
+- **Unemployment Rate** (normalized and inverted)
+- **Cost of Living Index** (normalized and inverted)
+
+All values are scaled from 0–1 and weighted by sliders that users can adjust to reflect their priorities.
+
+**Q: Why does this matter for social good?**  
+Communities with low resilience are more likely to suffer long-term economic damage from crises. This dashboard:
+- Helps identify those areas
+- Empowers organizations to **target aid**, education, or services
+- Supports **equitable resource allocation**
+
+**Q: Who could use this tool?**  
+- Nonprofits targeting economic assistance
+- Insurance providers (like Nationwide) for inclusive outreach
+- Local governments planning resilience strategies
+- Journalists, educators, and policy analysts
+
+**Q: Where does the data come from?**  
+- U.S. Census Bureau (Median Income)
+- Bureau of Labor Statistics (Unemployment)
+- Missouri Economic Research (Cost of Living Index)
+
+**Q: Can I download the data?**  
+Yes — scroll up and use the **Download CSV** button to export the live dataset with your selected weights.
+""")
