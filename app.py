@@ -58,6 +58,14 @@ selected_state = st.selectbox("Select a State", df["State"].sort_values())
 state_score = df[df["State"] == selected_state]["Resilience_Score"].values[0]
 st.metric(label=f"{selected_state} Resilience Score", value=round(state_score, 3))
 
+# Show how the selected state ranks
+state_rank = df.sort_values("Resilience_Score", ascending=False).reset_index(drop=True)
+rank = state_rank[state_rank["State"] == selected_state].index[0] + 1
+total_states = len(df)
+
+st.markdown(f"**{selected_state}** ranks **#{rank} out of {total_states}** in overall financial resilience.")
+
+
 # ---------------------------------------------
 # 📊 Bar Chart
 # ---------------------------------------------
