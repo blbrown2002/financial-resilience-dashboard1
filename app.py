@@ -66,26 +66,3 @@ fig_map = px.choropleth(
 )
 
 st.plotly_chart(fig_map, use_container_width=True)
-# Score Breakdown Table
-st.subheader("🧮 Resilience Score Breakdown")
-
-breakdown_df = df[[
-    "State",
-    "Income_Norm",
-    "Unemployment_Norm",
-    "Cost_Norm",
-    "Resilience_Score"
-]].copy()
-
-# Rename columns for readability
-breakdown_df.columns = [
-    "State",
-    "Income (Normalized)",
-    "Unemployment (Normalized)",
-    "Cost of Living (Normalized)",
-    "Resilience Score"
-]
-
-# Round for presentation
-st.dataframe(breakdown_df.round(3), use_container_width=True)
-
