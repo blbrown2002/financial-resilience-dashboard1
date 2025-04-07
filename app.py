@@ -8,7 +8,7 @@ st.set_page_config(page_title="Financial Resilience Dashboard", layout="wide")
 # Load data
 @st.cache_data
 def load_data():
-    return pd.read_csv("resilience_scores_full.csv"  # Make sure this file is in your repo
+    return pd.read_csv("resilience_scores_full.csv")
 
 df = load_data()
 
