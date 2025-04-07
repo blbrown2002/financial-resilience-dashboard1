@@ -126,3 +126,15 @@ breakdown_df.columns = [
 ]
 
 st.dataframe(breakdown_df.round(3), use_container_width=True)
+
+# ---------------------------------------------
+# 🏆 Top & Bottom Resilience Rankings
+# ---------------------------------------------
+st.subheader("🏆 Top 5 Most Resilient States")
+top5_df = df.sort_values("Resilience_Score", ascending=False).head(5)[["State", "Resilience_Score"]]
+st.dataframe(top5_df.style.highlight_max(axis=0), use_container_width=True)
+
+st.subheader("⚠️ Bottom 5 Least Resilient States")
+bottom5_df = df.sort_values("Resilience_Score", ascending=True).head(5)[["State", "Resilience_Score"]]
+st.dataframe(bottom5_df.style.highlight_min(axis=0), use_container_width=True)
+
