@@ -5,22 +5,22 @@ import plotly.express as px
 # Set page config FIRST
 st.set_page_config(page_title="Financial Resilience Dashboard", layout="wide")
 
-# Load data (without caching so sliders reflect immediately)
-import numpy as np
-
+# Load raw data (no caching so sliders work)
 def load_data():
     return pd.read_csv("resilience_scores_full.csv")
 
 df = load_data()
 
-# Sliders to adjust weights
-st.sidebar.header("⚖️ Adjust Resilience Score Weights")
+# ---------------------------------------------
+# 🎛️ SIDEBAR: Adjustable Weights
+# ---------------------------------------------
+st.sidebar.header("⚖️ Adjust Score Weights")
 
 w_income = st.sidebar.slider("Weight: Income", 0.0, 1.0, 0.4, 0.05)
 w_unemployment = st.sidebar.slider("Weight: Unemployment", 0.0, 1.0, 0.3, 0.05)
 w_cost = st.sidebar.slider("Weight: Cost of Living", 0.0, 1.0, 0.3, 0.05)
 
-# Normalize weights to sum to 1
+# Normalize weights so they sum to 1
 total = w_income + w_unemployment + w_cost
 w_income, w_unemployment, w_cost = (
     w_income / total,
@@ -28,29 +28,39 @@ w_income, w_unemployment, w_cost = (
     w_cost / total,
 )
 
-# Recalculate score with updated weights
+st.sidebar.markdown("**Normalized Weights**")
+st.sidebar.write(f"- Income: `{w_income:.2f}`")
+st.sidebar.write(f"- Unemployment: `{w_unemployment:.2f}`")
+st.sidebar.write(f"- Cost: `{w_cost:.2f}`")
+
+# ---------------------------------------------
+# 🧮 Recalculate Resilience Score (Live)
+# ---------------------------------------------
 df["Resilience_Score"] = (
     w_income * df["Income_Norm"] +
     w_unemployment * (1 - df["Unemployment_Norm"]) +
     w_cost * (1 - df["Cost_Norm"])
 ).round(3)
 
-
-df = load_data()
-
-# App title and description
+# ---------------------------------------------
+# 🧾 App Header
+# ---------------------------------------------
 st.title("💸 Financial Resilience Dashboard")
 st.markdown("""
 Use this dashboard to explore which U.S. states are most financially resilient — 
 based on median income, unemployment rate, and cost of living.
 """)
 
-# Dropdown for state selection
+# ---------------------------------------------
+# 🔍 State Selector
+# ---------------------------------------------
 selected_state = st.selectbox("Select a State", df["State"].sort_values())
 state_score = df[df["State"] == selected_state]["Resilience_Score"].values[0]
 st.metric(label=f"{selected_state} Resilience Score", value=round(state_score, 3))
 
-# Bar chart comparing all states
+# ---------------------------------------------
+# 📊 Bar Chart
+# ---------------------------------------------
 st.subheader("📊 State Comparison")
 fig = px.bar(
     df.sort_values("Resilience_Score", ascending=False),
@@ -61,10 +71,13 @@ fig = px.bar(
     height=500
 )
 st.plotly_chart(fig, use_container_width=True)
-# Choropleth map of U.S. Resilience Scores
+
+# ---------------------------------------------
+# 🗺️ Choropleth Map
+# ---------------------------------------------
 st.subheader("🗺️ U.S. Resilience Map")
 
-# Add state abbreviations to match geojson
+# Map state names to abbreviations
 state_abbr = {
     'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
     'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
@@ -77,7 +90,6 @@ state_abbr = {
     'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
     'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
 }
-
 df["State_Abbr"] = df["State"].map(state_abbr)
 
 fig_map = px.choropleth(
@@ -90,9 +102,11 @@ fig_map = px.choropleth(
     labels={"Resilience_Score": "Resilience Score"},
     title="Financial Resilience Score by State"
 )
-
 st.plotly_chart(fig_map, use_container_width=True)
-# Score Breakdown Table
+
+# ---------------------------------------------
+# 📊 Score Breakdown Table
+# ---------------------------------------------
 st.subheader("🧮 Resilience Score Breakdown")
 
 breakdown_df = df[[
@@ -103,7 +117,6 @@ breakdown_df = df[[
     "Resilience_Score"
 ]].copy()
 
-# Rename columns for readability
 breakdown_df.columns = [
     "State",
     "Income (Normalized)",
@@ -112,5 +125,4 @@ breakdown_df.columns = [
     "Resilience Score"
 ]
 
-# Round for presentation
 st.dataframe(breakdown_df.round(3), use_container_width=True)
