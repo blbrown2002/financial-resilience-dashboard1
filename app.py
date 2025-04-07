@@ -5,10 +5,36 @@ import plotly.express as px
 # Set page config FIRST
 st.set_page_config(page_title="Financial Resilience Dashboard", layout="wide")
 
-# Load data
-@st.cache_data
+# Load data (without caching so sliders reflect immediately)
+import numpy as np
+
 def load_data():
     return pd.read_csv("resilience_scores_full.csv")
+
+df = load_data()
+
+# Sliders to adjust weights
+st.sidebar.header("⚖️ Adjust Resilience Score Weights")
+
+w_income = st.sidebar.slider("Weight: Income", 0.0, 1.0, 0.4, 0.05)
+w_unemployment = st.sidebar.slider("Weight: Unemployment", 0.0, 1.0, 0.3, 0.05)
+w_cost = st.sidebar.slider("Weight: Cost of Living", 0.0, 1.0, 0.3, 0.05)
+
+# Normalize weights to sum to 1
+total = w_income + w_unemployment + w_cost
+w_income, w_unemployment, w_cost = (
+    w_income / total,
+    w_unemployment / total,
+    w_cost / total,
+)
+
+# Recalculate score with updated weights
+df["Resilience_Score"] = (
+    w_income * df["Income_Norm"] +
+    w_unemployment * (1 - df["Unemployment_Norm"]) +
+    w_cost * (1 - df["Cost_Norm"])
+).round(3)
+
 
 df = load_data()
 
