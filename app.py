@@ -191,3 +191,11 @@ with col2:
     st.markdown("### 🔴 Bottom 5 Least Resilient States")
     bottom5_df = df.sort_values("Resilience_Score", ascending=True).head(5)[["State", "Resilience_Score"]]
     st.dataframe(bottom5_df, use_container_width=True)
+
+st.download_button(
+    label="📥 Download Resilience Scores (with current weights)",
+    data=df.to_csv(index=False),
+    file_name='resilience_scores_export.csv',
+    mime='text/csv',
+)
+
